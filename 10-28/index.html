@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Brevard 10-28 Query Trainer v1.1</title>
+<title>Brevard 10-28 Query Trainer v1.2</title>
 <style>
 :root{--bg:#0b1118;--card:#121b25;--card2:#0f1720;--line:#263443;--txt:#ecf3f8;--muted:#9fb0be;--accent:#61a9ff;--good:#50d890;--bad:#ff7a7a;--warn:#ffd369}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#081018,#0d141c);color:var(--txt);font:15px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
@@ -14,10 +14,11 @@ label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}select,i
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{border:1px solid var(--line);background:#0d151e;border-radius:10px;padding:10px}.metric b{display:block;font-size:20px;margin-top:3px}@media(max-width:650px){.metrics{grid-template-columns:repeat(2,1fr)}}
 .returnTabs{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.tabbtn.active{background:#285c91;border-color:#4384c5}.returnPane{display:none}.returnPane.active{display:block}.terminal{background:#05090d;border:1px solid #31404c;border-radius:8px;padding:13px;font:13px/1.42 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-x:auto;color:#dbe5ec}.synthetic{border:1px solid #806d2b;background:#2a2411;color:#ffe69a;padding:8px 10px;border-radius:8px;margin-bottom:10px}.errors{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.err{background:#0d151e;border:1px solid var(--line);border-radius:9px;padding:9px;color:var(--muted)}.err strong{float:right;color:var(--txt)}@media(max-width:600px){.errors{grid-template-columns:repeat(2,1fr)}}
 table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:7px 5px;vertical-align:top}.hidden{display:none!important}.note{border-left:3px solid var(--accent);padding-left:10px}
+.readingGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.readingGrid .wide{grid-column:1/-1}.answerGood{border-color:var(--good)!important}.answerBad{border-color:var(--bad)!important}.answerBlank{border-color:#34475a!important}.readingResult{margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:9px;background:#0d151e}@media(max-width:650px){.readingGrid{grid-template-columns:1fr}.readingGrid .wide{grid-column:auto}}
 </style>
 </head>
 <body><div class="wrap">
-<div class="top"><div class="title"><h1>Brevard 10-28 Query Trainer</h1><div class="muted">Query-entry training · v1.1 · acknowledgement workflow</div></div><span class="pill">Synthetic training data only</span></div>
+<div class="top"><div class="title"><h1>Brevard 10-28 Query Trainer</h1><div class="muted">Query-entry training · v1.2 · query + return-reading workflow</div></div><span class="pill">Synthetic training data only</span></div>
 
 <div class="card">
  <div class="grid">
@@ -47,10 +48,25 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;b
 </div>
 
 <div id="returnCard" class="card hidden">
- <div class="row space"><div><strong>Generated return</strong><div class="small muted">Familiarization only in v1.0 — return interpretation is not scored yet.</div></div><span id="returnType" class="pill"></span></div>
+ <div class="row space"><div><strong>Generated return</strong><div class="small muted">Florida returns include a targeted information-finding exercise.</div></div><span id="returnType" class="pill"></span></div>
  <div class="synthetic"><strong>TRAINING DATA:</strong> All names, identifiers, addresses, VINs and records below are fabricated for this trainer. Do not query them in a live system.</div>
  <div id="flReturnArea" class="hidden"><div id="returnTabs" class="returnTabs"></div><div id="returnPanes"></div></div>
  <div id="oosReturnArea" class="hidden note">Out-of-state returns are intentionally not reproduced in this version because their layouts vary by state. This drill scores the <b>RQ</b> query only.</div>
+ <div id="readingExercise" class="hidden" style="margin-top:14px">
+  <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+  <div><strong>Find the information</strong><div class="small muted">Use the DMV_FL_VEH and DMV_FL_PER tabs. Common CAD abbreviations are accepted. Leave Registered Owner 2 blank when there is only one owner.</div></div>
+  <form id="readingForm" style="margin-top:10px">
+   <div class="readingGrid">
+    <div><label for="ansMake">Vehicle make</label><input id="ansMake" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Make or abbreviation"></div>
+    <div><label for="ansStyle">Vehicle style</label><input id="ansStyle" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Style or abbreviation"></div>
+    <div><label for="ansDecal">Decal status</label><input id="ansDecal" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Valid / expired"></div>
+    <div><label for="ansOwner1">Registered Owner 1 license</label><input id="ansOwner1" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Valid / expired / not valid"></div>
+    <div><label for="ansOwner2">Registered Owner 2 license</label><input id="ansOwner2" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Leave blank if no second owner"></div>
+   </div>
+   <div class="row" style="margin-top:11px"><button id="readingSubmit" type="submit" class="primary">Check Return</button></div>
+  </form>
+  <div id="readingResult" class="readingResult hidden"></div>
+ </div>
 </div>
 
 <div class="card">
@@ -64,7 +80,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;b
  <div style="overflow:auto;margin-top:10px"><table><thead><tr><th>#</th><th>Unit</th><th>State</th><th>Tag</th><th>Time</th><th>Score</th><th>Entered</th></tr></thead><tbody id="historyBody"></tbody></table></div>
 </div>
 
-<div class="card small muted"><strong>v1.1 scope:</strong> teaches the 10-28 query command and exposes trainees to a synthetic Florida DMV_FL_VEH / DMV_FL_PER layout. NCIC_PER is intentionally omitted. Normal Florida training returns use no stolen/wanted hit response.</div>
+<div class="card small muted"><strong>v1.2 scope:</strong> teaches the 10-28 query command, acknowledgement workflow, and targeted reading of synthetic Florida DMV_FL_VEH / DMV_FL_PER returns. NCIC_PER is intentionally omitted. Normal Florida training returns use no stolen/wanted hit response.</div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -79,7 +95,7 @@ const MIDDLE=['LEE','JAMES','MARIE','LYNN','RAY','JO','ANN','KAY','DALE','JEAN']
 const LAST=['TRAINER','EXAMPLE','SAMPLE','SCENARIO','PRACTICE','SIMULATED','DEMO'];
 const STREETS=['100 TRAINING WAY','225 PRACTICE LN','410 SCENARIO AV','911 DISPATCH DR','2800 SIMULATION RD','650 EXERCISE CT'];
 const CITIES=['MELBOURNE','COCOA','TITUSVILLE','PALM BAY','ROCKLEDGE','MERRITT ISLAND'];
-let voices=[],current=null,startAt=0,ticker=null,history=[],errs={format:0,unit:0,tag:0,state:0},radioStage='idle';
+let voices=[],current=null,currentReturn=null,startAt=0,ticker=null,history=[],errs={format:0,unit:0,tag:0,state:0},radioStage='idle';
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
 function rand(n){return Math.floor(Math.random()*n)}
 function randomTag(){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';let s='';for(let i=0;i<7;i++)s+=c[rand(c.length)];return s}
@@ -95,19 +111,50 @@ function speakStage(stage, replay=false){if(!current||!window.speechSynthesis)re
 function speak(){speakStage(radioStage==='second'?'second':'first',true)}
 function acknowledge(){if(!current||radioStage!=='first')return;$('ackBtn').disabled=true;$('radioStatus').textContent='Acknowledged — waiting for unit…';setTimeout(()=>speakStage('second'),$('level').value==='new'?650:350)}
 function startTicker(){clearInterval(ticker);ticker=setInterval(()=>{$('timer').textContent=((performance.now()-startAt)/1000).toFixed(1)},100)}
-function newScenario(){current=buildScenario();radioStage='first';$('feedbackCard').classList.add('hidden');$('returnCard').classList.add('hidden');$('cad').value='';$('cad').disabled=true;$('submitBtn').disabled=true;$('ackBtn').disabled=true;$('replayBtn').disabled=false;$('radioStatus').textContent='Preparing radio…';$('timer').textContent='0.0';setTimeout(()=>speakStage('first'),180)}
+function newScenario(){current=buildScenario();radioStage='first';$('feedbackCard').classList.add('hidden');$('returnCard').classList.add('hidden');$('readingExercise').classList.add('hidden');currentReturn=null;$('cad').value='';$('cad').disabled=true;$('submitBtn').disabled=true;$('ackBtn').disabled=true;$('replayBtn').disabled=false;$('radioStatus').textContent='Preparing radio…';$('timer').textContent='0.0';setTimeout(()=>speakStage('first'),180)}
 function pad(n,l=2){return String(n).padStart(l,'0')}
 function dateMMDDYY(d){return `${pad(d.getMonth()+1)}/${pad(d.getDate())}/${String(d.getFullYear()).slice(-2)}`}
 function dateMMDDYYYY(d){return `${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()}`}
 function makeDOB(){const now=new Date(),age=22+rand(52),d=new Date(now.getFullYear()-age,rand(12),1+rand(27));return d}
 function fakeOwner(i){const first=pick(FIRST),middle=pick(MIDDLE),last=pick(LAST),dob=makeDOB(),sex=Math.random()<.5?'F':'M',addr=pick(STREETS),city=pick(CITIES);return{first,middle,last,name:`${first} ${middle} ${last}`,dob,sex,addr,city,state:'FL',dl:`T${pad(100000000000+rand(899999999999),12)}`,height:sex==='M'?`${5+rand(2)}${pad(rand(12))}`:`${5+rand(2)}${pad(rand(12))}`}}
 function fakeVIN(){const c='ABCDEFGHJKLMNPRSTUVWXYZ1234567890';let s='TRN';while(s.length<17)s+=c[rand(c.length)];return s}
-function floridaReturn(){const owners=[fakeOwner(1)];if(Math.random()<.22)owners.push(fakeOwner(2));const [make,style,year,color]=pick(VEHICLES),vin=fakeVIN(),today=new Date(),decal=new Date(today.getFullYear()+1,rand(12),1+rand(27));let veh=`DHSMV RECORD-\n${current.tag}    ${vin} ${make}     ${style}     ${year}     COLOR: ${color}\n${owners[0].name}\n\n${owners[0].addr}\n${owners[0].city}     FL\nDOB ${dateMMDDYY(owners[0].dob)} SEX: ${owners[0].sex}\nDECAL EXP: ${dateMMDDYY(decal)}\n\nREGISTRANT(S) INFORMATION\n`;
-owners.forEach((o,i)=>{veh+=`REGISTRANT ${i+1}: ${o.name}\n${o.addr}     SEX: ${o.sex} DOB: ${dateMMDDYY(o.dob)}\n${o.city}     FL     DL#${i+1}:${o.dl}\n`;if(i<owners.length-1)veh+='\n'});if(owners.length===1)veh+='REGISTRANT 2:\n';veh+=`\n— FCIC HIT RESPONSE —\nFRQ: NO RECORDS FOUND\n—END—`;
- const personTabs=owners.map((o,i)=>{const issue=new Date(today.getFullYear()-3,rand(12),1+rand(27)),exp=new Date(today.getFullYear()+3,rand(12),1+rand(27));return{label:`DMV_FL_PER${owners.length>1?' '+(i+1):''}`,text:`—DHSMV—\n\n${o.dl}\n${o.first},${o.middle},${o.last}\n${o.addr}     ${o.city}     FL\nTYPE LIC: E     DOB: ${dateMMDDYY(o.dob)} HT:${o.height} RACE: W SEX: ${o.sex}\nCURRENT LICENSE ISSUED: ${dateMMDDYYYY(issue)} EXPIRES: ${dateMMDDYYYY(exp)}\nVALID LICENSE\n\n—FCIC HIT RESPONSE—\nFDQ: NO RECORDS FOUND\n—END—`}});return[{label:'DMV_FL_VEH',text:veh},...personTabs]}
-function renderReturns(){const fl=current.state==='FL';$('returnCard').classList.remove('hidden');$('returnType').textContent=fl?'Florida FRQ return':'Out-of-state RQ';$('flReturnArea').classList.toggle('hidden',!fl);$('oosReturnArea').classList.toggle('hidden',fl);if(!fl)return;const tabs=floridaReturn();$('returnTabs').innerHTML=tabs.map((t,i)=>`<button type="button" class="tabbtn ${i===0?'active':''}" data-i="${i}">${t.label}</button>`).join('');$('returnPanes').innerHTML=tabs.map((t,i)=>`<div class="returnPane ${i===0?'active':''}" data-i="${i}"><div class="terminal"></div></div>`).join('');tabs.forEach((t,i)=>document.querySelector(`.returnPane[data-i="${i}"] .terminal`).textContent=t.text);document.querySelectorAll('.tabbtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabbtn,.returnPane').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelector(`.returnPane[data-i="${b.dataset.i}"]`).classList.add('active')})}
-function submit(e){e.preventDefault();if(!current||$('cad').disabled)return;clearInterval(ticker);speechSynthesis?.cancel();const time=(performance.now()-startAt)/1000,raw=$('cad').value,g=grade(raw);$('cad').disabled=true;$('submitBtn').disabled=true;$('feedbackCard').classList.remove('hidden');$('scoreLine').innerHTML=`<strong class="${g.score===100?'good':'bad'}">${g.score}% accuracy</strong><span class="pill">${time.toFixed(1)} sec</span>`;let miss=[];for(const k of ['format','unit','tag','state'])if(!g[k]){miss.push(k[0].toUpperCase()+k.slice(1));errs[k]++}$('feedback').innerHTML=g.score===100?'<span class="good">Correct query.</span>':`<span class="bad">Check: ${miss.join(', ')}.</span>`;$('expected').textContent=current.expected;$('transcript').textContent=current.text;renderReturns();history.push({unit:current.unit,state:current.state,tag:current.tag,time,score:g.score,entered:raw,expected:current.expected});updateStats();}
-function updateStats(){const n=history.length,correct=history.filter(x=>x.score===100).length,avg=n?history.reduce((s,x)=>s+x.time,0)/n:0,best=n?Math.min(...history.map(x=>x.time)):0,fl=history.filter(x=>x.state==='FL').length;$('rounds').textContent=`Queries: ${n}`;$('accuracy').textContent=n?`${Math.round(correct/n*100)}%`:'—';$('avgTime').textContent=n?`${avg.toFixed(1)}s`:'—';$('bestTime').textContent=n?`${best.toFixed(1)}s`:'—';$('mix').textContent=`${fl} / ${n-fl}`;for(const k of ['Format','Unit','Tag','State'])$('e'+k).textContent=errs[k.toLowerCase()];$('historyBody').innerHTML=history.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.state}</td><td>${x.tag}</td><td>${x.time.toFixed(1)}s</td><td>${x.score}%</td><td>${escapeHtml(x.entered)}</td></tr>`).join('')}
+function statusText(s){return s==='VALID'?'VALID LICENSE':s==='EXPIRED'?'EXPIRED LICENSE':'NOT VALID LICENSE'}
+function licenseDates(status,today){let issue,exp;if(status==='EXPIRED'){issue=new Date(today.getFullYear()-7,rand(12),1+rand(27));exp=new Date(today.getFullYear()-1-rand(3),rand(12),1+rand(27))}else{issue=new Date(today.getFullYear()-3,rand(12),1+rand(27));exp=new Date(today.getFullYear()+1+rand(5),rand(12),1+rand(27))}return{issue,exp}}
+function floridaReturn(){
+ const owners=[fakeOwner(1)];if(Math.random()<.30)owners.push(fakeOwner(2));
+ const [make,style,year,color]=pick(VEHICLES),vin=fakeVIN(),today=new Date();
+ const decalValid=Math.random()<.72;
+ const decal=decalValid?new Date(today.getFullYear()+1,rand(12),1+rand(27)):new Date(today.getFullYear()-1-rand(2),rand(12),1+rand(27));
+ const statuses=owners.map(()=>pick(['VALID','VALID','VALID','EXPIRED','NOT VALID']));
+ let veh=`DHSMV RECORD-\n${current.tag}    ${vin} ${make}     ${style}     ${year}     COLOR: ${color}\n${owners[0].name}\n\n${owners[0].addr}\n${owners[0].city}     FL\nDOB ${dateMMDDYY(owners[0].dob)} SEX: ${owners[0].sex}\nDECAL EXP: ${dateMMDDYY(decal)}\n\nREGISTRANT(S) INFORMATION\n`;
+ owners.forEach((o,i)=>{veh+=`REGISTRANT ${i+1}: ${o.name}\n${o.addr}     SEX: ${o.sex} DOB: ${dateMMDDYY(o.dob)}\n${o.city}     FL     DL#${i+1}:${o.dl}\n`;if(i<owners.length-1)veh+='\n'});if(owners.length===1)veh+='REGISTRANT 2:\n';veh+=`\n— FCIC HIT RESPONSE —\nFRQ: NO RECORDS FOUND\n—END—`;
+ const personTabs=owners.map((o,i)=>{const d=licenseDates(statuses[i],today);return{label:`DMV_FL_PER${owners.length>1?' '+(i+1):''}`,text:`—DHSMV—\n\n${o.dl}\n${o.first},${o.middle},${o.last}\n${o.addr}     ${o.city}     FL\nTYPE LIC: E     DOB: ${dateMMDDYY(o.dob)} HT:${o.height} RACE: W SEX: ${o.sex}\nCURRENT LICENSE ISSUED: ${dateMMDDYYYY(d.issue)} EXPIRES: ${dateMMDDYYYY(d.exp)}\n${statusText(statuses[i])}\n\n—FCIC HIT RESPONSE—\nFDQ: NO RECORDS FOUND\n—END—`}});
+ return{tabs:[{label:'DMV_FL_VEH',text:veh},...personTabs],answers:{make,style,decal:decalValid?'VALID':'EXPIRED',owner1:statuses[0],owner2:owners.length>1?statuses[1]:''},ownerCount:owners.length};
+}
+const MAKE_ALIASES={NISS:['NISS','NISSAN'],FORD:['FORD'],HOND:['HOND','HONDA'],TOYT:['TOYT','TOY','TOYOTA'],KIA:['KIA'],JEEP:['JEEP'],CHEV:['CHEV','CHEVY','CHEVROLET'],HYUN:['HYUN','HYUNDAI'],SUBA:['SUBA','SAA','SUBARU'],MAZD:['MAZD','MAZDA']};
+const STYLE_ALIASES={'4D':['4D','4DR','4 DOOR','4DOOR'],'PU':['PU','PK','PICKUP','TRK','TRUCK'],'UT':['UT','SUV','S U V']};
+const STATUS_ALIASES={VALID:['VALID','VAL','V'],EXPIRED:['EXPIRED','EXP','EX'], 'NOT VALID':['NOT VALID','NOTVALID','NOT VAL','NOTVAL','INVALID','INV']};
+function answerNorm(v){return normalize(v).replace(/[.]/g,'').replace(/\s+/g,' ')}
+function aliasMatch(v,aliases){const n=answerNorm(v),compact=n.replace(/\s/g,'');return aliases.some(a=>{const x=answerNorm(a);return n===x||compact===x.replace(/\s/g,'')})}
+function setAnswerClass(id,ok,neutral=false){const e=$(id);e.classList.remove('answerGood','answerBad','answerBlank');e.classList.add(neutral?'answerBlank':ok?'answerGood':'answerBad')}
+function clearReading(){for(const id of ['ansMake','ansStyle','ansDecal','ansOwner1','ansOwner2']){$(id).value='';setAnswerClass(id,false,true)}$('readingResult').classList.add('hidden');$('readingResult').innerHTML=''}
+function gradeReading(e){e.preventDefault();if(!currentReturn)return;const a=currentReturn.answers;
+ const checks={
+  make:aliasMatch($('ansMake').value,MAKE_ALIASES[a.make]||[a.make]),
+  style:aliasMatch($('ansStyle').value,STYLE_ALIASES[a.style]||[a.style]),
+  decal:aliasMatch($('ansDecal').value,STATUS_ALIASES[a.decal]),
+  owner1:aliasMatch($('ansOwner1').value,STATUS_ALIASES[a.owner1]),
+  owner2:a.owner2===''?answerNorm($('ansOwner2').value)==='':aliasMatch($('ansOwner2').value,STATUS_ALIASES[a.owner2])
+ };
+ setAnswerClass('ansMake',checks.make);setAnswerClass('ansStyle',checks.style);setAnswerClass('ansDecal',checks.decal);setAnswerClass('ansOwner1',checks.owner1);setAnswerClass('ansOwner2',checks.owner2);
+ const score=Math.round(Object.values(checks).filter(Boolean).length/5*100),miss=[];if(!checks.make)miss.push(`Vehicle make: ${a.make}`);if(!checks.style)miss.push(`Vehicle style: ${a.style}`);if(!checks.decal)miss.push(`Decal: ${a.decal}`);if(!checks.owner1)miss.push(`Owner 1 license: ${a.owner1}`);if(!checks.owner2)miss.push(`Owner 2 license: ${a.owner2||'BLANK — no second owner'}`);
+ const r=$('readingResult');r.classList.remove('hidden');r.innerHTML=`<strong class="${score===100?'good':'bad'}">Return-reading score: ${score}%</strong>${miss.length?`<div class="small" style="margin-top:6px">Check: ${miss.join(' · ')}</div>`:'<div class="small good" style="margin-top:6px">All requested information located correctly.</div>'}`;
+ if(history.length){history[history.length-1].returnScore=score;updateStats()}
+}
+function renderReturns(){const fl=current.state==='FL';$('returnCard').classList.remove('hidden');$('returnType').textContent=fl?'Florida FRQ return':'Out-of-state RQ';$('flReturnArea').classList.toggle('hidden',!fl);$('oosReturnArea').classList.toggle('hidden',fl);$('readingExercise').classList.toggle('hidden',!fl);currentReturn=null;if(!fl)return;currentReturn=floridaReturn();clearReading();const tabs=currentReturn.tabs;$('returnTabs').innerHTML=tabs.map((t,i)=>`<button type="button" class="tabbtn ${i===0?'active':''}" data-i="${i}">${t.label}</button>`).join('');$('returnPanes').innerHTML=tabs.map((t,i)=>`<div class="returnPane ${i===0?'active':''}" data-i="${i}"><div class="terminal"></div></div>`).join('');tabs.forEach((t,i)=>document.querySelector(`.returnPane[data-i="${i}"] .terminal`).textContent=t.text);document.querySelectorAll('.tabbtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabbtn,.returnPane').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelector(`.returnPane[data-i="${b.dataset.i}"]`).classList.add('active')})}
+$('readingForm').onsubmit=gradeReading;
+function submit(e){e.preventDefault();if(!current||$('cad').disabled)return;clearInterval(ticker);speechSynthesis?.cancel();const time=(performance.now()-startAt)/1000,raw=$('cad').value,g=grade(raw);$('cad').disabled=true;$('submitBtn').disabled=true;$('feedbackCard').classList.remove('hidden');$('scoreLine').innerHTML=`<strong class="${g.score===100?'good':'bad'}">${g.score}% accuracy</strong><span class="pill">${time.toFixed(1)} sec</span>`;let miss=[];for(const k of ['format','unit','tag','state'])if(!g[k]){miss.push(k[0].toUpperCase()+k.slice(1));errs[k]++}$('feedback').innerHTML=g.score===100?'<span class="good">Correct query.</span>':`<span class="bad">Check: ${miss.join(', ')}.</span>`;$('expected').textContent=current.expected;$('transcript').textContent=current.text;renderReturns();history.push({unit:current.unit,state:current.state,tag:current.tag,time,score:g.score,returnScore:null,entered:raw,expected:current.expected});updateStats();}
+function updateStats(){const n=history.length,correct=history.filter(x=>x.score===100).length,avg=n?history.reduce((s,x)=>s+x.time,0)/n:0,best=n?Math.min(...history.map(x=>x.time)):0,fl=history.filter(x=>x.state==='FL').length;$('rounds').textContent=`Queries: ${n}`;$('accuracy').textContent=n?`${Math.round(correct/n*100)}%`:'—';$('avgTime').textContent=n?`${avg.toFixed(1)}s`:'—';$('bestTime').textContent=n?`${best.toFixed(1)}s`:'—';$('mix').textContent=`${fl} / ${n-fl}`;for(const k of ['Format','Unit','Tag','State'])$('e'+k).textContent=errs[k.toLowerCase()];$('historyBody').innerHTML=history.map((x,i)=>`<tr><td>${i+1}</td><td>${x.unit}</td><td>${x.state}</td><td>${x.tag}</td><td>${x.time.toFixed(1)}s</td><td>${x.score}%${x.returnScore!=null?` / Return ${x.returnScore}%`:''}</td><td>${escapeHtml(x.entered)}</td></tr>`).join('')}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function exportCsv(){let rows=[['#','Unit','State','Tag','Time Seconds','Score','Entered','Expected'],...history.map((x,i)=>[i+1,x.unit,x.state,x.tag,x.time.toFixed(1),x.score,x.entered,x.expected])];let csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='brevard_10_28_training_session.csv';a.click();URL.revokeObjectURL(a.href)}
 $('newBtn').onclick=newScenario;$('ackBtn').onclick=acknowledge;$('replayBtn').onclick=speak;$('queryForm').onsubmit=submit;$('clearBtn').onclick=()=>{$('cad').value='';$('cad').focus()};$('instructorToggle').onclick=()=>$('instructorPanel').classList.toggle('hidden');$('exportCsv').onclick=exportCsv;$('resetSession').onclick=()=>{history=[];errs={format:0,unit:0,tag:0,state:0};updateStats()};$('level').onchange=()=>localStorage.setItem('brevard1028Level',$('level').value);$('level').value=localStorage.getItem('brevard1028Level')||'intermediate';if(window.speechSynthesis){speechSynthesis.onvoiceschanged=loadVoices;setTimeout(loadVoices,0)}

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1220">
-<title>Brevard Traffic Stop Trainer v2.9.2</title>
+<title>Brevard Traffic Stop Trainer · v2.8.1 Pronunciation Update</title>
 <style>
 :root{--bg:#0b1220;--card:#111827;--card2:#0f172a;--border:#334155;--text:#f8fafc;--muted:#94a3b8;--accent:#38bdf8;--good:#22c55e;--bad:#ef4444;--warn:#f59e0b}
 *{box-sizing:border-box}
@@ -139,7 +139,7 @@ details{margin-top:12px}.footer{color:var(--muted);font-size:12px;margin:18px 3p
  </div>
 </div>
 
-<div class="footer">Synthetic training data only. No real driver, vehicle, or CJIS/NCIC information is used. · Scenario & Radio Realism v2.9.2</div>
+<div class="footer">Synthetic training data only. No real driver, vehicle, or CJIS/NCIC information is used. · Scenario & Radio Realism v2.9.3</div>
 
 </div>
 
@@ -178,7 +178,8 @@ function buildScenario(){
   `${spokenUnit}, Brevard, ten fifty, ${r1s} and ${r2s}.`,
     `Brevard, ${spokenUnit}, ten fifty at ${r1s} and ${r2s}.`
  ];
- const veh=`${color.toLowerCase()} ${vehicleSpeech(make)}${body?' '+body.toLowerCase():''}`;
+ const spokenBody=body==='SUV'?'S U V':body?body.toLowerCase():'';
+ const veh=`${color.toLowerCase()} ${vehicleSpeech(make)}${spokenBody?' '+spokenBody:''}`;
  const plate=plateSpeech(tag);
  const florida=[`Out of Florida, ${plate}, on a ${veh}.`,`Florida, ${plate}, ${veh}.`,`It's Florida, ${plate}, on a ${veh}.`,`Out of Florida, ${plate}, ${veh}.`];
  const other=[`${stateName} tag, ${plate}, ${veh}.`,`Out of ${stateName}, ${plate}, on a ${veh}.`,`${stateName}, ${plate}, ${veh}.`];
